@@ -10,6 +10,7 @@ Memoapp::Application.routes.draw do
   # OmniAuth
   match "/auth/:provider/callback" => "sessions#create"
   match "/logout" => "sessions#destroy", :as => :logout
+  match "/tweet" => "contents#tweet"
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
