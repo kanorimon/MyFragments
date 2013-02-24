@@ -3,7 +3,20 @@
     <% if current_user %>
        <%= image_tag current_user.avatar.url(:thumb) %>
        <%= current_user.name %>さん <%= link_to "ログアウト" ,logout_path %>
-       <%= link_to "ツイート" ,tweet_path %>
+
+       <%= form_for @memo, :url => {:action => 'create'} do |f| %>
+         <%= f.text_field :text %>
+         <%= f.check_box :tweet_flg, {}, true, false %>
+         <%= f.submit %>
+       <% end %>
+       
+       <% @memos.each do |memo| %>
+         <%= memo.id %>/
+         <%= memo.user_id %>/
+         <%= memo.text %>/
+         <%= memo.parent_memo_id %><br>
+       <% end %>
+
     <% else %>
        <%= link_to "Twitterでlogin","/auth/twitter" %>
     <% end %>

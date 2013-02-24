@@ -4,7 +4,8 @@ Memoapp::Application.routes.draw do
 
   resources :contents
   resources :sessions
-  
+  resources :memos
+    
   root :to => 'contents#index'
   
   # OmniAuth
