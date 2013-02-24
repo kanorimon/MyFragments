@@ -1,6 +1,7 @@
 <body>
   <div id="user_nav">
     <% if current_user %>
+       <%= image_tag current_user.avatar.url(:thumb) %>
        <%= current_user.name %>さん <%= link_to "ログアウト" ,logout_path %>
        <%= link_to "ツイート" ,tweet_path %>
     <% else %>

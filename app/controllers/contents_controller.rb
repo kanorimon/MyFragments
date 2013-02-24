@@ -1,6 +1,7 @@
 # coding: utf-8
+require "twitter"
+
 class ContentsController < ApplicationController
-  require "twitter"
   
   def index
     
