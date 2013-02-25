@@ -12,29 +12,32 @@ class ContentsController < ApplicationController
   end
   
   def create
-    @memo = Memo.new(params[:memo])
+    @memo = Memo.new
     @memo.user_id = current_user.id
     @memo.text = params[:memo][:text]
-    @memo.parent_memo_id = 0
 
-    # logger("test")
-    # logger(@memo.tweet_flg)
-    
     if @memo.save
-      if params[:memo][:tweet_flg]
-        logger.debug "tweetします"
-        Twitter.configure do |config|
-          config.consumer_key       = ENV['CONSUMER_KEY']
-          config.consumer_secret    = ENV['CONSUMER_SECRET']
-          config.oauth_token        = current_user.token
-          config.oauth_token_secret = current_user.secret
-        end
+
+      @tag = Tag.new
+      @tag.memo_id = @memo.id
+      @tag.name = params[:memo][:tag_name]
+
+      if @tag.save
+        if params[:memo][:tweet_flg]
+          logger.debug "tweetします"
+          Twitter.configure do |config|
+            config.consumer_key       = ENV['CONSUMER_KEY']
+            config.consumer_secret    = ENV['CONSUMER_SECRET']
+            config.oauth_token        = current_user.token
+            config.oauth_token_secret = current_user.secret
+          end
     
-        twitter_client = Twitter::Client.new
-        twitter_client.update(params[:memo][:text])
+          twitter_client = Twitter::Client.new
+          twitter_client.update(params[:memo][:text])
         
+        end
+        redirect_to root_url, notice: 'Diary was successfully created.'
       end
-      redirect_to root_url, notice: 'Diary was successfully created.'
     else
       redirect_to root_url, notice: 'Diary was error.'
     end

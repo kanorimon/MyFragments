@@ -7,14 +7,22 @@
        <%= form_for @memo, :url => {:action => 'create'} do |f| %>
          <%= f.text_field :text %>
          <%= f.check_box :tweet_flg, {}, true, false %>
+         <%= f.text_field :tag_name %>
          <%= f.submit %>
        <% end %>
        
        <% @memos.each do |memo| %>
-         <%= memo.id %>/
-         <%= memo.user_id %>/
-         <%= memo.text %>/
-         <%= memo.parent_memo_id %><br>
+         <%= memo.id %>***
+         <%= memo.user_id %>***
+         <%= memo.created_at.strftime('%Y/%m/%d %H:%M:%S') %>***
+         <%= memo.text %>***/
+         
+         <% memo.tags.each do |tag| %>
+           <%= tag.id %>***
+           <%= tag.memo_id %>***
+           <%= tag.name %>***/
+         <% end %>   
+         <br>
        <% end %>
 
     <% else %>
