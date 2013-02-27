@@ -2,10 +2,10 @@ require 'open-uri'
 class User < ActiveRecord::Base
   attr_accessible :name, :provider, :uid, :nickname, :token, :secret
   attr_accessible :avatar
-  has_attached_file :avatar,:format => :jpeg, :styles => { :thumb => "50x50>" }
+  has_attached_file :avatar,:format => :jpeg, :styles => { :thumb => "30x30>" }
   before_post_process :transliterate_file_name
-  has_many :memos
-   
+  has_many :memos, :dependent => :destroy
+       
   def self.create_with_omniauth(auth)
     create!do |user|
 

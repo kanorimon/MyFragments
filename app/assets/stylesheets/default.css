@@ -1,0 +1,52 @@
+     html {  
+        overflow-y:scroll;  
+        word-wrap:break-word;
+      }
+
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+      
+      .my-icon{
+        margin-right:5px;
+      }
+
+      .media-border{
+        margin:0;
+        padding:0;
+        border: 0px solid #aaaaaa;
+      }
+      
+      .container-fluid,
+      .row-fluid { height: inherit; }
+      
+      p {
+        margin: 0;
+      }
+
+      hr {
+        margin: 10px 0;
+        border: 0;
+        border-top: 1px solid #eeeeee;
+        border-bottom: 1px solid #ffffff;
+      }
+
+      hr.memo {
+        margin: 0px 0 10px 0 ;
+        border: 0;
+        border-top: 1px solid #eeeeee;
+        border-bottom: 1px solid #ffffff;
+      }
+      
+
+      form {
+        margin: 0;
+      }
+
+      .weak {
+        font-size: 85%;
+        color: #999999;
+      }
+
+      

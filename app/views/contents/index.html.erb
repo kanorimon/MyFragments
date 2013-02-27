@@ -1,33 +1,120 @@
-<body>
-  <div id="user_nav">
+
     <% if current_user %>
-       <%= image_tag current_user.avatar.url(:thumb) %>
-       <%= current_user.name %>さん <%= link_to "ログアウト" ,logout_path %>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="#">MyFragments</a>
+
+          <div class="nav-collapse collapse">
+
+            <div class="navbar-form pull-right">
+              
+              <span class="btn-group">
+              	       <%= image_tag current_user.avatar.url(:thumb) , :class => "img-rounded my-icon" %>
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+
+       <%= current_user.name %>さん 
+                  <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu pull-right">
+                  <li><%= link_to "ログアウト" ,logout_path %></li>
+                  <li class="divider"></li>
+                  <li><%= link_to "退会" ,remove_path %></li>
+                </ul>
+              </span>
+
+            </div>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container -->
+      </div><!--/.navbar-inner -->
+    </div><!--/.navbar -->
+
+
+    <div class="container">
+
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="span3">
+
 
        <%= form_for @memo, :url => {:action => 'create'} do |f| %>
-         <%= f.text_field :text %>
-         <%= f.check_box :tweet_flg, {}, true, false %>
-         <%= f.text_field :tag_name %>
-         <%= f.submit %>
+         <%= f.text_area :text, :class => "span3", :placeholder => "Fragments?", :size=>"10x3" %>
+         <%= f.text_field :tag_name, :class => "span3" %>
+         
+         <%= f.hidden_field :tweet_flg %>
+         	　　　    
+         <%= f.submit "memo", :class => "btn btn-primary" , :onClick => ("return submitWithValueAndConfirm('create','false');") %>
+         <%= f.submit "with Twitter", :class => "btn btn-info" , :onClick => ("return submitWithValueAndConfirm('create','true');") %>
+
        <% end %>
        
+       
+          <hr>
+
+        </div><!-- /span3 -->
+
+        <div class="span9">
+
+
+
        <% @memos.each do |memo| %>
-         <%= memo.id %>***
-         <%= memo.user_id %>***
-         <%= memo.created_at.strftime('%Y/%m/%d %H:%M:%S') %>***
-         <%= memo.text %>***/
+ 
+             <div>
+              <div>
+             	
+         <%= memo.id %>:
+         <%= memo.text %>
+              </div>
+
+              <div class="row">
+              
+                <div class="span7 weak">
+                  <div class="text-right">
          
          <% memo.tags.each do |tag| %>
-           <%= tag.id %>***
-           <%= tag.memo_id %>***
-           <%= tag.name %>***/
+           <a href="#"><%= tag.name %></a> 
          <% end %>   
-         <br>
-       <% end %>
+                    <i class="icon-edit"></i>
+                  </div>
+                </div>
+                <div class="span2 weak">
+                  <div class="text-right">
+                    <%= memo.created_at.strftime('%Y/%m/%d %H:%M:%S') %>
+                    <i class="icon-trash"></i>
+                  </div>
+                </div>
+              
+              </div>
+
+              <hr class="memo">
+              
+            </div>
+         
+         <% end %>   
+
+          <button class="btn" type="button">もっと見る</button>
+          
+        </div><!-- /span9 -->
+
+      </div><!-- /row -->
+
+      <hr>
+
+      <footer>
+        <p>ヘルプ&nbsp;&nbsp;利用規約&nbsp;&nbsp;お問い合わせ</p>
+      </footer>
+
+    </div> <!-- /container -->
+
 
     <% else %>
        <%= link_to "Twitterでlogin","/auth/twitter" %>
     <% end %>
-  </div>
-<%= yield %>
-</body>
+
+

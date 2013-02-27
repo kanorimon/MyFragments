@@ -16,14 +16,17 @@ class ContentsController < ApplicationController
     @memo.user_id = current_user.id
     @memo.text = params[:memo][:text]
 
-    if @memo.save
+    @memo.save!
 
+    tagary =  params[:memo][:tag_name].gsub(/　/," ").split(nil)
+    tagary.each{|tag|
       @tag = Tag.new
       @tag.memo_id = @memo.id
-      @tag.name = params[:memo][:tag_name]
-
-      if @tag.save
-        if params[:memo][:tweet_flg]
+      @tag.name = tag
+      @tag.save!
+     }
+     
+    if params[:tweet_flg] == true
           logger.debug "tweetします"
           Twitter.configure do |config|
             config.consumer_key       = ENV['CONSUMER_KEY']
@@ -34,31 +37,46 @@ class ContentsController < ApplicationController
     
           twitter_client = Twitter::Client.new
           twitter_client.update(params[:memo][:text])
-        
+          
         end
         redirect_to root_url, notice: 'Diary was successfully created.'
-      end
-    else
-      redirect_to root_url, notice: 'Diary was error.'
-    end
+        #else
+        #redirect_to root_url, notice: 'Diary was error.'
+        #end
   end  
   
   def tweet
     
-    Memo.create(params)
+   @memo = Memo.new
+    @memo.user_id = current_user.id
+    @memo.text = params[:memo][:text]
+
+    @memo.save!
+
+    tagary =  params[:memo][:tag_name].gsub(/　/," ").split(nil)
+    tagary.each{|tag|
+      @tag = Tag.new
+      @tag.memo_id = @memo.id
+      @tag.name = tag
+      @tag.save!
+     }
+
+
+        
+        redirect_to root_url, notice: 'Diary was successfully created.'
+        #else
+        #redirect_to root_url, notice: 'Diary was error.'
+        #end
+  end
+  
+  
+  def userdestroy
     
-=begin
-    Twitter.configure do |config|
-      config.consumer_key       = ENV['CONSUMER_KEY']
-      config.consumer_secret    = ENV['CONSUMER_SECRET']
-      config.oauth_token        = current_user.token
-      config.oauth_token_secret = current_user.secret
-    end
-    
-    twitter_client = Twitter::Client.new
-    twitter_client.update("テスト")
-=end
-    
+    @user = User.find(current_user.id)
+    @user.destroy
+    session[:user_id] = nil
+
     redirect_to root_url
+
   end
 end
