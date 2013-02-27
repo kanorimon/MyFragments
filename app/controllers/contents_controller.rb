@@ -6,7 +6,7 @@ class ContentsController < ApplicationController
   def index
     if current_user
       @memo = Memo.new
-      @memos = Memo.where("user_id =?", current_user.id) 
+      @memos = Memo.where("user_id =?", current_user.id).order('id desc')
     end
 
   end
@@ -26,7 +26,8 @@ class ContentsController < ApplicationController
       @tag.save!
      }
      
-    if params[:tweet_flg] == true
+     logger.debug "*****************" + params[:memo][:tweet_flg]
+    if params[:memo][:tweet_flg] == "true"
           logger.debug "tweetします"
           Twitter.configure do |config|
             config.consumer_key       = ENV['CONSUMER_KEY']
@@ -45,28 +46,17 @@ class ContentsController < ApplicationController
         #end
   end  
   
-  def tweet
-    
-   @memo = Memo.new
-    @memo.user_id = current_user.id
-    @memo.text = params[:memo][:text]
+  def find
+      @memo = Memo.new
+@memos = Memo.find(
+  :all, 
+  :order => "memos.id", 
+  :conditions => ["tags.name =?", params[:search_string]], 
+  :include => :tags
+)
 
-    @memo.save!
+    render 'contents/index.html.erb'
 
-    tagary =  params[:memo][:tag_name].gsub(/　/," ").split(nil)
-    tagary.each{|tag|
-      @tag = Tag.new
-      @tag.memo_id = @memo.id
-      @tag.name = tag
-      @tag.save!
-     }
-
-
-        
-        redirect_to root_url, notice: 'Diary was successfully created.'
-        #else
-        #redirect_to root_url, notice: 'Diary was error.'
-        #end
   end
   
   
@@ -75,8 +65,7 @@ class ContentsController < ApplicationController
     @user = User.find(current_user.id)
     @user.destroy
     session[:user_id] = nil
-
-    redirect_to root_url
+redirect_to root_url
 
   end
 end

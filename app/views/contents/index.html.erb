@@ -44,17 +44,22 @@
 
 
        <%= form_for @memo, :url => {:action => 'create'} do |f| %>
+         <%= f.hidden_field :tweet_flg %>
          <%= f.text_area :text, :class => "span3", :placeholder => "Fragments?", :size=>"10x3" %>
          <%= f.text_field :tag_name, :class => "span3" %>
-         
-         <%= f.hidden_field :tweet_flg %>
-         	　　　    
-         <%= f.submit "memo", :class => "btn btn-primary" , :onClick => ("return submitWithValueAndConfirm('create','false');") %>
-         <%= f.submit "with Twitter", :class => "btn btn-info" , :onClick => ("return submitWithValueAndConfirm('create','true');") %>
+<%= f.submit "memo", :class => "btn btn-primary" , :onClick => ("return submitWithValueAndConfirm('new_memo','false');") %>
+<%= f.submit "with Twitter", :class => "btn btn-info" , :onClick => ("return submitWithValueAndConfirm('new_memo','true');") %>
 
        <% end %>
        
        
+          <hr>
+
+<%= form_tag("/find") do %>
+<%= text_field_tag :search_string %>
+<%= submit_tag "search",:class => "btn btn-primary"  %>
+<% end %>
+
           <hr>
 
         </div><!-- /span3 -->
