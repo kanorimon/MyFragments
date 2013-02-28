@@ -1,125 +1,99 @@
+<% if current_user %>
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="brand" href="http://192.168.0.5:8080">MyFragments</a>
 
-    <% if current_user %>
+        <div class="nav-collapse collapse">
+          <div class="navbar-form pull-right">
+            <span class="btn-group">
+              <%= image_tag current_user.avatar.url(:thumb) , :class => "img-rounded my-icon" %>
+              <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                <%= current_user.nickname %> 
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu pull-right">
+                <li><%= link_to "ログアウト" ,logout_path %></li>
+                <li class="divider"></li>
+                <li><%= link_to "退会" ,remove_path %></li>
+              </ul>
+            </span>
+          </div>
+        </div><!--/.nav-collapse -->
+      </div><!--/.container -->
+    </div><!--/.navbar-inner -->
+  </div><!--/.navbar -->
 
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="brand" href="http://192.168.0.5:8080">MyFragments</a>
+  <div class="container">
 
-          <div class="nav-collapse collapse">
+    <div class="row">
+      <div class="span3">
+        <%= form_for @memo, :url => {:controller => 'memos',:action => 'create'} do |f| %>
+          <%= f.hidden_field :tweet_flg %>
+          <%= f.text_area :text, :class => "span3", :placeholder => "Fragments?", :size=>"10x3" %>
+          <%= f.text_field :tag_name, :class => "span3" %>
+          <%= f.submit "memo", :class => "btn btn-primary" , :onClick => ("return submitWithValueAndConfirm('new_memo','false');") %>
+          <%= f.submit "with Twitter", :class => "btn btn-info" , :onClick => ("return submitWithValueAndConfirm('new_memo','true');") %>
+        <% end %>
+      
+        <hr>
 
-            <div class="navbar-form pull-right">
-              
-              <span class="btn-group">
-              	       <%= image_tag current_user.avatar.url(:thumb) , :class => "img-rounded my-icon" %>
-                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+        <%= form_tag(:controller => "memos", :action => "find") do %>
+          <%= text_field_tag 'search_string', nil, :class => 'span3' %>
+          <%= submit_tag "search",:class => "btn btn-primary"  %>
+        <% end %>
 
-       <%= current_user.name %>さん 
-                  <span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu pull-right">
-                  <li><%= link_to "ログアウト" ,logout_path %></li>
-                  <li class="divider"></li>
-                  <li><%= link_to "退会" ,remove_path %></li>
-                </ul>
-              </span>
+        <hr>
 
+      </div><!-- /span3 -->
+
+      <div class="span9">
+
+        <% @memos.each do |memo| %>
+          <div>
+            <div>
+              <%= memo.id %>:
+              <%= memo.text %>
             </div>
-          </div><!--/.nav-collapse -->
-        </div><!--/.container -->
-      </div><!--/.navbar-inner -->
-    </div><!--/.navbar -->
-
-
-    <div class="container">
-
-      <!-- Example row of columns -->
-      <div class="row">
-        <div class="span3">
-
-
-       <%= form_for @memo, :url => {:action => 'create'} do |f| %>
-         <%= f.hidden_field :tweet_flg %>
-         <%= f.text_area :text, :class => "span3", :placeholder => "Fragments?", :size=>"10x3" %>
-         <%= f.text_field :tag_name, :class => "span3" %>
-<%= f.submit "memo", :class => "btn btn-primary" , :onClick => ("return submitWithValueAndConfirm('new_memo','false');") %>
-<%= f.submit "with Twitter", :class => "btn btn-info" , :onClick => ("return submitWithValueAndConfirm('new_memo','true');") %>
-
-       <% end %>
-       
-       
-          <hr>
-
-<%= form_tag("/find") do %>
-<%= text_field_tag :search_string %>
-<%= submit_tag "search",:class => "btn btn-primary"  %>
-<% end %>
-
-          <hr>
-
-        </div><!-- /span3 -->
-
-        <div class="span9">
-
-
-
-       <% @memos.each do |memo| %>
- 
-             <div>
-              <div>
-             	
-         <%= memo.id %>:
-         <%= memo.text %>
-              </div>
-
-              <div class="row">
-              
-                <div class="span7 weak">
-                  <div class="text-right">
-         
-         <% memo.tags.each do |tag| %>
-           <a href="#"><%= tag.name %></a> 
-         <% end %>   
-                    <i class="icon-edit"></i>
-                  </div>
+            <div class="row">
+              <div class="span7 weak">
+                <div class="text-right">
+                  <% memo.tags.each do |tag| %>
+                    <a href="#"><%= tag.name %></a> 
+                  <% end %>   
+                  <i class="icon-edit"></i>
                 </div>
-                <div class="span2 weak">
-                  <div class="text-right">
-                    <%= memo.created_at.strftime('%Y/%m/%d %H:%M:%S') %>
-                    <i class="icon-trash"></i>
-                  </div>
-                </div>
-              
               </div>
-
-              <hr class="memo">
-              
+              <div class="span2 weak">
+                <div class="text-right">
+                  <%= memo.created_at.strftime('%Y/%m/%d %H:%M:%S') %>
+                  <i class="icon-trash"></i>
+                </div>
+              </div>
             </div>
-         
-         <% end %>   
 
-          <button class="btn" type="button">もっと見る</button>
+            <hr class="memo">
+          </div>
+        <% end %>   
+
+        <button class="btn" type="button">もっと見る</button>
           
-        </div><!-- /span9 -->
+      </div><!-- /span9 -->
+    </div><!-- /row -->
 
-      </div><!-- /row -->
+    <hr>
+    
+    <footer>
+      <p>ヘルプ&nbsp;&nbsp;利用規約&nbsp;&nbsp;お問い合わせ</p>
+    </footer>
 
-      <hr>
+  </div> <!-- /container -->
 
-      <footer>
-        <p>ヘルプ&nbsp;&nbsp;利用規約&nbsp;&nbsp;お問い合わせ</p>
-      </footer>
-
-    </div> <!-- /container -->
-
-
-    <% else %>
-       <%= link_to "Twitterでlogin","/auth/twitter" %>
-    <% end %>
-
-
+<% else %>
+  <%= link_to "Twitterでlogin","/auth/twitter" %>
+<% end %>

@@ -4,16 +4,15 @@ Memoapp::Application.routes.draw do
 
   resources :contents
   resources :sessions
-  resources :memos
     
   root :to => 'contents#index'
   
   # OmniAuth
   match "/auth/:provider/callback" => "sessions#create"
   match "/logout" => "sessions#destroy", :as => :logout
-  match "/remove" => "contents#userdestroy", :as => :remove
-  match "/find" => "contents#find", :as => :find
-  match "/tweet" => "contents#tweet"
+  match "/remove" => "users#destroy", :as => :remove
+  match 'memos/find'
+  match 'memos/create'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
