@@ -54,33 +54,12 @@
 
       <div class="span9">
 
-        <% @memos.each do |memo| %>
-          <div>
-            <div>
-              <%= memo.id %>:
-              <%= memo.text %>
-            </div>
-            <div class="row">
-              <div class="span7 weak">
-                <div class="text-right">
-                  <% memo.tags.each do |tag| %>
-                    <a href="#"><%= tag.name %></a> 
-                  <% end %>   
-                  <i class="icon-edit"></i>
-                </div>
-              </div>
-              <div class="span2 weak">
-                <div class="text-right">
-                  <%= memo.created_at.strftime('%Y/%m/%d %H:%M:%S') %>
-                  <i class="icon-trash"></i>
-                </div>
-              </div>
-            </div>
-
-            <hr class="memo">
-          </div>
-        <% end %>   
-
+        <div id="posts">
+          <%= render @memos %>
+        </div>
+        
+        <%= link_to_next_page @memos, 'more', :remote => true, :id => "load_more_link" %>
+           
         <button class="btn" type="button">もっと見る</button>
           
       </div><!-- /span9 -->

@@ -1,0 +1,6 @@
+$('#posts').append("<%= escape_javascript(render :partial => @memos)%>");
+<% if @memos.last_page? %>
+    $('#load_more_link').hide();
+<% else %>
+    $('#load_more_link').replaceWith("<%= escape_javascript(link_to_next_page @memos, 'more', :remote => true, :id => 'load_more_link' )%>");
+<% end %>
