@@ -24,4 +24,66 @@ class ApplicationController < ActionController::Base
     @search_string = session[:search_string]
   end
 
+  # 取得
+  def getDefaultMemos
+    if last_memo
+      @memos = Memo.where("user_id =? and id < ?", current_user.id,last_memo.id).order('id desc').limit(5)    
+    else
+      @memos = Memo.where("user_id =?", current_user.id).order('id desc').limit(5)
+    end
+
+    return @memos
+  end
+   
+  def getDefaultMemosCount(last_id)
+    @count_memos = Memo.count(:conditions => ["user_id =? and id < ?", current_user.id,last_id])
+
+    return @count_memos
+  end
+  
+
+  # 取得
+  def getFindMemos
+    if last_memo
+     @memos = Memo.find(
+      :all, 
+      :order => "memos.id DESC",
+      :limit => 5,
+      :conditions => ["(memos.text like ? or tags.name like ? ) and memos.user_id = ? and memos.id < ?",
+        '%' + search_string + '%',
+        '%' + search_string + '%',
+        current_user.id,
+        last_memo.id], 
+      :include => :tags
+      )
+    else
+      @memos = Memo.find(
+        :all, 
+        :order => "memos.id DESC",
+        :limit => 5,
+        :conditions => ["(memos.text like ? or tags.name like ? ) and memos.user_id = ?",
+          '%' + search_string + '%',
+          '%' + search_string + '%',
+          current_user.id], 
+        :include => :tags
+       )
+    end
+
+    return @memos
+  end
+   
+  def getFindMemosCount(last_id)
+    @count_memos = Memo.count(
+      :all, 
+      :conditions => ["(memos.text like ? or tags.name like ? ) and memos.user_id = ? and memos.id < ?",
+        '%' + search_string + '%',
+        '%' + search_string + '%',
+        current_user.id,
+        last_id], 
+      :include => :tags
+      )
+
+    return @count_memos
+  end
+
 end

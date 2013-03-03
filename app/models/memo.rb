@@ -7,4 +7,6 @@ class Memo < ActiveRecord::Base
   # リレーション
   belongs_to :user
   has_many :tags, :dependent => :destroy
+
+
 end

@@ -5,14 +5,18 @@ class ContentsController < ApplicationController
   def index
     # ログイン中の場合
     if current_user
+      session[:last_memo_id] = nil
+      
       # memo新規作成用
       @memo = Memo.new
-      # ユーザーのmemoを表示
-      @memos = Memo.where("user_id =?", current_user.id).order('id desc').limit(5)
-      session[:last_memo_id] = @memos.last.id
-
-      @count_memos = Memo.count(:conditions => ["user_id =? and id < ?", current_user.id,@memos.last.id])
+      # ユーザーのmemoを取得
+      @memos = getDefaultMemos
+  
+      # もっと読むの制御
+      @count_memos = getDefaultMemosCount(@memos.last.id)
       @load_more_option = "show"
+
+      session[:last_memo_id] = @memos.last.id
 
       respond_to do |format|
         format.html { render }
