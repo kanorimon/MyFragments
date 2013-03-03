@@ -1,4 +1,4 @@
-          <div>
+          <div id="memo<%= memo.id %>">
             <div>
               <%= memo.id %>:
               <%= memo.text %>
@@ -8,14 +8,17 @@
                 <div class="text-right">
                   <% memo.tags.each do |tag| %>
                     <a href="#"><%= tag.name %></a> 
-                  <% end %>   
+                  <% end %>
                   <i class="icon-edit"></i>
                 </div>
               </div>
               <div class="span2 weak">
                 <div class="text-right">
                   <%= memo.created_at.strftime('%Y/%m/%d %H:%M:%S') %>
-                  <i class="icon-trash"></i>
+                  <%= link_to  '<i class="icon-trash"></i> '.html_safe, 
+                    memo, :method => :delete,
+                    :remote => true,
+                    data: { confirm: '削除しますか？' } %>
                 </div>
               </div>
             </div>

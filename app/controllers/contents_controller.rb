@@ -8,7 +8,11 @@ class ContentsController < ApplicationController
       # memo新規作成用
       @memo = Memo.new
       # ユーザーのmemoを表示
-      @memos = Memo.where("user_id =?", current_user.id).order('id desc').page(params[:page]).per(5)
+      @memos = Memo.where("user_id =?", current_user.id).order('id desc').limit(5)
+      session[:last_memo_id] = @memos.last.id
+
+      @count_memos = Memo.count(:conditions => ["user_id =? and id < ?", current_user.id,@memos.last.id])
+      @load_more_option = "show"
 
       respond_to do |format|
         format.html { render }

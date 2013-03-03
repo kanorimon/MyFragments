@@ -33,12 +33,11 @@
 
     <div class="row">
       <div class="span3">
-        <%= form_for @memo, :url => {:controller => 'memos',:action => 'create'} do |f| %>
+        <%= form_for @memo, :url => {:controller => 'memos',:action => 'create'}, :remote => true do |f| %>
           <%= f.hidden_field :tweet_flg %>
           <%= f.text_area :text, :class => "span3", :placeholder => "Fragments?", :size=>"10x3" %>
           <%= f.text_field :tag_name, :class => "span3" %>
-          <%= f.submit "memo", :class => "btn btn-primary" , :onClick => ("return submitWithValueAndConfirm('new_memo','false');") %>
-          <%= f.submit "with Twitter", :class => "btn btn-info" , :onClick => ("return submitWithValueAndConfirm('new_memo','true');") %>
+          <%= f.submit "memo", :class => "btn btn-primary" %>
         <% end %>
       
         <hr>
@@ -58,7 +57,17 @@
           <%= render @memos %>
         </div>
         
-        <%= link_to_next_page @memos, 'more', :remote => true, :id => "load_more_link" %>
+        <% if @count_memos == 0 %>
+          
+        <% else %>
+          <% if @load_more_option == "show" %>
+            <%= link_to 'more', load_more_path , :remote => true, :id => "load_more_link" %>
+          <% else %>
+            <%= link_to 'more', load_find_more_path , :remote => true, :id => "load_more_link" %>
+          <% end %>
+        <% end %>
+
+        <%# link_to_next_page @memos, 'more', :remote => true, :id => "load_more_link" %>
            
         <button class="btn" type="button">もっと見る</button>
           

@@ -4,6 +4,7 @@ Memoapp::Application.routes.draw do
 
   resources :contents
   resources :sessions
+  resources :memos
     
   root :to => 'contents#index'
   
@@ -12,7 +13,10 @@ Memoapp::Application.routes.draw do
   match "/logout" => "sessions#destroy", :as => :logout
   match "/remove" => "users#destroy", :as => :remove
   match 'memos/find'
-  match 'memos/create'
+  match "/load_more" => "memos#showlist", :as => :load_more
+  match "/load_find_more" => "memos#findlist", :as => :load_find_more
+  # match 'memos/create'
+  # match 'memos/destroy'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
