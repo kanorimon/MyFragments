@@ -5,6 +5,7 @@ Memoapp::Application.routes.draw do
   resources :contents
   resources :sessions
   resources :memos
+  resources :tags
     
   root :to => 'contents#index'
   
@@ -15,6 +16,7 @@ Memoapp::Application.routes.draw do
   match 'memos/find'
   match "/load_more" => "memos#showlist", :as => :load_more
   match "/load_find_more" => "memos#findlist", :as => :load_find_more
+  match "/tag_update" => "memos#tagupdate", :as => :tag_update
   # match 'memos/create'
   # match 'memos/destroy'
 

@@ -16,5 +16,16 @@
 
 <%= yield %>
 
+		<script type="text/javascript">
+			$(function(){
+				$(".toggle-body").hide();
+				$(".toggle-title").toggle(function(){
+					$(this).next().next().slideDown("fast");
+				},function(){
+					$(this).next().next().slideUp("fast");
+				});
+			});
+			
+		</script>
   </body>
 </html>

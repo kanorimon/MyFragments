@@ -93,6 +93,19 @@ class MemosController < ApplicationController
 
   end
   
+  def tagupdate
+    @memo_id = params[:memo_id]
+    @tags = Tag.where('memo_id = ?', params[:memo_id])
+    
+    @print_tag = ""
+    @tags.each{|tag|
+      @print_tag = @print_tag.concat(tag.name).concat(" ")
+    }
+
+    render 'contents/tagupdate.js.erb'
+    
+  end
+  
   def destroy
 
     @delete_memo_id = params[:id]

@@ -5,11 +5,11 @@
             </div>
             <div class="row">
               <div class="span7 weak">
-                <div class="text-right">
+                <div class="text-right" id="tag<%= memo.id %>">
                   <% memo.tags.each do |tag| %>
                     <a href="#"><%= tag.name %></a> 
                   <% end %>
-                  <i class="icon-edit"></i>
+                  <%= link_to '<i class="icon-edit"></i> '.html_safe, tag_update_path(:memo_id => memo.id) , :remote => true %>
                 </div>
               </div>
               <div class="span2 weak">

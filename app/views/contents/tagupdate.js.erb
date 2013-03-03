@@ -1,0 +1,1 @@
+$('#tag<%= @memo_id %>').replaceWith("<%= escape_javascript(render :partial => 'contents/taginsert', :locals => {:memo_id => @memo_id, :print_tag => @print_tag} )%>");
