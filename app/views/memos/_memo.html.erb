@@ -7,9 +7,10 @@
               <div class="span7 weak">
                 <div class="text-right" id="tag<%= memo.id %>">
                   <% memo.tags.each do |tag| %>
-                    <a href="#"><%= tag.name %></a> 
+                    <%= link_to tag.name, tags_find_path(:tag_name => tag.name) %>
+                    &nbsp;
                   <% end %>
-                  <%= link_to '<i class="icon-edit"></i> '.html_safe, tag_update_path(:memo_id => memo.id) , :remote => true %>
+                  <%= link_to '<i class="icon-edit"></i> '.html_safe, tags_input_path(:memo_id => memo.id) , :remote => true %>
                 </div>
               </div>
               <div class="span2 weak">

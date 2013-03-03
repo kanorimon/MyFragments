@@ -1,8 +1,0 @@
-<div class="text-right" id="tag<%= @memo_id %>">
-
-<%= form_tag({:controller => "tags", :action => "create"}, {:remote => true}) do %>
-  <%= hidden_field_tag 'memo_id', @memo_id %>
-  <%= text_field_tag 'tag_names', nil, :class => 'span3', :value => @print_tag %>
-  <%= submit_tag "update",:class => "btn btn-primary"  %>
-<% end %>
-</div>

@@ -40,7 +40,6 @@
         <% end %>
       
         <hr>
-
         <%= form_tag(:controller => "memos", :action => "find") do %>
           <%= text_field_tag 'search_string', nil, :class => 'span3' %>
           <%= submit_tag "search",:class => "btn btn-primary"  %>
@@ -52,6 +51,9 @@
 
       <div class="span9">
 
+        <div id="error">
+        </div>
+
         <div id="posts">
           <%= render @memos %>
         </div>
@@ -60,15 +62,21 @@
           
         <% else %>
           <% if @load_more_option == "show" %>
-            <%= link_to 'more', load_more_path , :remote => true, :id => "load_more_link" %>
-          <% else %>
-            <%= link_to 'more', load_find_more_path , :remote => true, :id => "load_more_link" %>
+            <%= link_to load_more_path , :remote => true, :id => "load_more_link" do %>
+              <button class="btn" type="button">もっと見る</button>
+            <% end %>
+          <% elsif @load_more_option == "find" %>
+            <%= link_to load_find_more_path , :remote => true, :id => "load_more_link" do %>
+              <button class="btn" type="button">もっと見る</button>
+            <% end %>
+          <% elsif @load_more_option == "tagfind" %>
+            <%= link_to load_tagfind_more_path , :remote => true, :id => "load_more_link" do %>
+              <button class="btn" type="button">もっと見る</button>
+            <% end %>
           <% end %>
         <% end %>
-
-        <%# link_to_next_page @memos, 'more', :remote => true, :id => "load_more_link" %>
            
-        <button class="btn" type="button">もっと見る</button>
+       
           
       </div><!-- /span9 -->
     </div><!-- /row -->

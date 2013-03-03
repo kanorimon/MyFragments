@@ -8,5 +8,8 @@ class Memo < ActiveRecord::Base
   belongs_to :user
   has_many :tags, :dependent => :destroy
 
+  validates :text, 
+    :presence => true,
+    :length => {:maximum => 140}
 
 end

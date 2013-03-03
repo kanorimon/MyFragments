@@ -18,8 +18,24 @@ class MemosController < ApplicationController
 
   # メモ新規作成
   def create
+    begin
     # メモの入力内容を設定
     @memo = Memo.new
+    # 入力値の検証
+   @error_comment = "エラーが発生しました。再度投稿してください。"
+    if params[:memo][:text].blank?
+       @error_comment = "空白のメモは登録できません。"
+      raise
+    end
+    if params[:memo][:text].split(//u).length > 140
+       @error_comment = "メモは140文字まで投稿できます。"
+      raise
+    end
+    if params[:memo][:tag_name].split(//u).length > 100
+       @error_comment = "タグは100文字まで設定できます。"
+      raise
+    end
+
     @memo.user_id = current_user.id
     @memo.text = params[:memo][:text]
 
@@ -36,7 +52,16 @@ class MemosController < ApplicationController
       # dbに保存
       @tag.save!
      }
+
+    @memos = Memo.find_by_id(@memo.id)
      
+    rescue
+      render 'contents/error.js.erb'
+
+    else
+      render 'memos/create.js.erb'
+    end
+=begin    
     # twitter_flgが"true"の場合
     if params[:memo][:tweet_flg] == "true"
       # twitterに投稿
@@ -49,10 +74,9 @@ class MemosController < ApplicationController
       twitter_client = Twitter::Client.new
       twitter_client.update(params[:memo][:text])
     end
-
+=end
     # ajax
-    @memos = Memo.find_by_id(@memo.id)
-    render 'contents/create.js.erb'
+
     # rootにリダイレクト
     # redirect_to root_url, notice: 'Diary was successfully created.'
     #else
@@ -92,19 +116,41 @@ class MemosController < ApplicationController
     render 'contents/index.js.erb'
 
   end
-  
-  def tagupdate
-    @memo_id = params[:memo_id]
-    @tags = Tag.where('memo_id = ?', params[:memo_id])
-    
-    @print_tag = ""
-    @tags.each{|tag|
-      @print_tag = @print_tag.concat(tag.name).concat(" ")
-    }
 
-    render 'contents/tagupdate.js.erb'
-    
+
+  # 文字列検索
+  def tagfind
+    # 検索用エンティティ
+    @memo = Memo.new
+    # 文字列検索実行
+    session[:last_memo_id] = nil
+
+    session[:search_string] = params[:tag_name]
+
+    @memos = getTagFindMemos
+
+    @count_memos = getTagFindMemosCount(@memos.last.id)
+    @load_more_option = "tagfind"
+
+    session[:last_memo_id] = @memos.last.id
+
+    # indexを使って出力
+    render 'contents/index.html.erb'
   end
+  
+  def tagfindlist
+ 
+    @memos = getTagFindMemos
+
+    @count_memos = getTagFindMemosCount(@memos.last.id)
+    
+    session[:last_memo_id] = @memos.last.id
+
+    # ajax
+    render 'contents/index.js.erb'
+
+  end
+  
   
   def destroy
 
@@ -115,7 +161,7 @@ class MemosController < ApplicationController
     @memo.destroy
     
     # ajax
-    render 'contents/delete.js.erb'
+    render 'memos/delete.js.erb'
   end
   
 end

@@ -1,8 +1,11 @@
+# coding: utf-8
 class ApplicationController < ActionController::Base
 
   # CSRF
   protect_from_forgery
 
+  #private $PAGENUM = 5
+  
   # ログインユーザhelper
   helper_method :current_user, :last_memo
 
@@ -44,19 +47,24 @@ class ApplicationController < ActionController::Base
 
   # 取得
   def getFindMemos
+  
+    #keywordary =  search_string.gsub(/　/," ").split(nil)
     if last_memo
-     @memos = Memo.find(
-      :all, 
-      :order => "memos.id DESC",
-      :limit => 5,
-      :conditions => ["(memos.text like ? or tags.name like ? ) and memos.user_id = ? and memos.id < ?",
-        '%' + search_string + '%',
-        '%' + search_string + '%',
-        current_user.id,
-        last_memo.id], 
-      :include => :tags
-      )
+      @memos = Memo.find(
+        :all, 
+        :order => "memos.id DESC",
+        :limit => 5,
+        :conditions => ["(memos.text like ? or tags.name like ? ) and memos.user_id = ? and memos.id < ?",
+          '%' + search_string + '%',
+          '%' + search_string + '%',
+          current_user.id,
+            last_memo.id],  
+        :include => :tags
+       )
     else
+      #@memos = Memo.search(:memos_text_cont_all => keywordary).result
+      #@memos = @memos.order("memos.id desc").limit(5)
+
       @memos = Memo.find(
         :all, 
         :order => "memos.id DESC",
@@ -73,11 +81,56 @@ class ApplicationController < ActionController::Base
   end
    
   def getFindMemosCount(last_id)
+
+    keywordary =  search_string.gsub(/　/," ").split(nil)
+  
     @count_memos = Memo.count(
       :all, 
       :conditions => ["(memos.text like ? or tags.name like ? ) and memos.user_id = ? and memos.id < ?",
         '%' + search_string + '%',
         '%' + search_string + '%',
+        current_user.id,
+        last_id], 
+      :include => :tags
+      )
+
+    return @count_memos
+  end
+
+
+  # 取得
+  def getTagFindMemos
+    if last_memo
+     @memos = Memo.find(
+      :all, 
+      :order => "memos.id DESC",
+      :limit => 5,
+      :conditions => ["tags.name = ? and memos.user_id = ? and memos.id < ?",
+        search_string,
+        current_user.id,
+        last_memo.id], 
+      :include => :tags
+      )
+    else
+      @memos = Memo.find(
+        :all, 
+        :order => "memos.id DESC",
+        :limit => 5,
+        :conditions => ["tags.name = ? and memos.user_id = ?",
+          search_string,
+          current_user.id], 
+        :include => :tags
+       )
+    end
+
+    return @memos
+  end
+   
+  def getTagFindMemosCount(last_id)
+    @count_memos = Memo.count(
+      :all, 
+      :conditions => ["tags.name = ? and memos.user_id = ? and memos.id < ?",
+        search_string,
         current_user.id,
         last_id], 
       :include => :tags

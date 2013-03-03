@@ -30,6 +30,7 @@ gem 'twitter'
 gem "paperclip", "~> 3.0"
 
 gem 'kaminari'
+#gem 'ransack'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

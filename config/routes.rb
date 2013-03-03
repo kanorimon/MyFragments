@@ -16,7 +16,10 @@ Memoapp::Application.routes.draw do
   match 'memos/find'
   match "/load_more" => "memos#showlist", :as => :load_more
   match "/load_find_more" => "memos#findlist", :as => :load_find_more
-  match "/tag_update" => "memos#tagupdate", :as => :tag_update
+  match "/load_tagfind_more" => "memos#tagfindlist", :as => :load_tagfind_more
+  match "/tags_input" => "tags#input", :as => :tags_input
+  match "/tags_show" => "tags#show", :as => :tags_show
+  match "/tags_find" => "memos#tagfind", :as => :tags_find
   # match 'memos/create'
   # match 'memos/destroy'
 
