@@ -102,7 +102,7 @@ $(function(){
         url: '/memos/reorder',
         type: 'POST',
         dataType: 'text',
-        data: $(this).sortable('serialize') + '&authenticity_token=' + $('#authenticity_token').val(),
+        data: $(this).sortable('serialize', {attribute: "name"}) + '&authenticity_token=' + $('#authenticity_token').val(),
 
       })
     }

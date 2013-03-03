@@ -2,7 +2,7 @@
 class ApplicationController < ActionController::Base
 
   # CSRF
-  #protect_from_forgery
+  protect_from_forgery
 
   #private $PAGENUM = 5
   
@@ -26,6 +26,13 @@ class ApplicationController < ActionController::Base
   def search_string
     @search_string = session[:search_string]
   end
+
+  # 読み込み最終行設定
+  private
+  def before_seq
+    @before_seq = session[:before_seq]
+  end
+
 
   # 取得
   def getDefaultMemos

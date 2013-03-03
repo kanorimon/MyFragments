@@ -19,8 +19,6 @@ class MemosController < ApplicationController
   # メモ新規作成
   def create
     begin
-    # メモの入力内容を設定
-    @memo = Memo.new
     # 入力値の検証
    @error_comment = "エラーが発生しました。再度投稿してください。"
     if params[:memo][:text].blank?
@@ -36,11 +34,17 @@ class MemosController < ApplicationController
       raise
     end
 
+    # メモの入力内容を設定
+    @memo = Memo.new
     @memo.user_id = current_user.id
     @memo.text = params[:memo][:text]
 
     # dbに保存
     @memo.save!
+
+    @memo.seq = @memo.id
+    @memo.save!
+
 
     # 入力されたタグを空白で区切って配列として保存
     tagary =  params[:memo][:tag_name].gsub(/　/," ").split(nil)
@@ -95,11 +99,16 @@ class MemosController < ApplicationController
 
     @memos = getFindMemos
 
-    @count_memos = getFindMemosCount(@memos.last.id)
+    # もっと読むの制御
+    if @memos.blank?
+      @count_memos = 0
+    else
+      @count_memos = getFindMemosCount(@memos.last.id)
+      session[:last_memo_id] = @memos.last.id
+    end
     @load_more_option = "find"
 
-    session[:last_memo_id] = @memos.last.id
-
+  
     # indexを使って出力
     render 'contents/index.html.erb'
   end
@@ -129,10 +138,15 @@ class MemosController < ApplicationController
 
     @memos = getTagFindMemos
 
-    @count_memos = getTagFindMemosCount(@memos.last.id)
+    if @memos.blank?
+      @count_memos = 0
+    else
+      @count_memos = getTagFindMemosCount(@memos.last.id)
+      session[:last_memo_id] = @memos.last.id
+    end
+
     @load_more_option = "tagfind"
 
-    session[:last_memo_id] = @memos.last.id
 
     # indexを使って出力
     render 'contents/index.html.erb'
@@ -156,7 +170,28 @@ class MemosController < ApplicationController
   end
 
   def reorder
-    params[:memo].each_with_index{|row, i| Memo.update(row, {:seq => i + 1})}
+    @memo_seqs = params[:memo]
+    logger.debug("****************************************")
+
+    @memo_seqs.each do |seq|
+       logger.debug(seq)
+    end
+
+    logger.debug("****************************************")
+       logger.debug(before_seq)
+
+=begin
+    n = 0
+    ActiveRecord::Base.transaction do
+      @category_ids.each do |id|
+        category = Category.find(id)
+        category.sequence = n
+        n += 1
+        category.save
+      end
+    end
+=end
+    #params[:memo].each_with_index{|row, i| Memo.update(row, {:seq => i + 1})}
     render :nothing => true
   end
   

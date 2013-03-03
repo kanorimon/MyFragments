@@ -6,6 +6,7 @@ class ContentsController < ApplicationController
     # ログイン中の場合
     if current_user
       session[:last_memo_id] = nil
+      session[:before_seq] = []
       
       # memo新規作成用
       @memo = Memo.new
@@ -13,10 +14,17 @@ class ContentsController < ApplicationController
       @memos = getDefaultMemos
   
       # もっと読むの制御
-      @count_memos = getDefaultMemosCount(@memos.last.id)
+      if @memos.blank?
+        @count_memos = 0
+      else
+        @count_memos = getDefaultMemosCount(@memos.last.id)
+        session[:last_memo_id] = @memos.last.id
+      end
       @load_more_option = "show"
 
-      session[:last_memo_id] = @memos.last.id
+      @memos.each do |memo|
+        session[:before_seq].push(memo.seq)
+      end 
 
       respond_to do |format|
         format.html { render }
