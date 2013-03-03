@@ -20,6 +20,8 @@ Memoapp::Application.routes.draw do
   match "/tags_input" => "tags#input", :as => :tags_input
   match "/tags_show" => "tags#show", :as => :tags_show
   match "/tags_find" => "memos#tagfind", :as => :tags_find
+  #match "/reorder_todos" => "memos#reorder", :as => :reorder_todos
+  match 'memos/reorder' => 'memos#reorder', :via => [:get, :post]
   # match 'memos/create'
   # match 'memos/destroy'
 

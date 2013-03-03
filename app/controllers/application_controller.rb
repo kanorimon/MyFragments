@@ -2,7 +2,7 @@
 class ApplicationController < ActionController::Base
 
   # CSRF
-  protect_from_forgery
+  #protect_from_forgery
 
   #private $PAGENUM = 5
   

@@ -151,6 +151,14 @@ class MemosController < ApplicationController
 
   end
   
+  def index
+    @memos = Memo.where("user_id =?", current_user.id).order('id desc').order('seq')
+  end
+
+  def reorder
+    params[:memo].each_with_index{|row, i| Memo.update(row, {:seq => i + 1})}
+    render :nothing => true
+  end
   
   def destroy
 

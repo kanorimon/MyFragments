@@ -57,6 +57,7 @@
         <div id="posts">
           <%= render @memos %>
         </div>
+        <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
         
         <% if @count_memos == 0 %>
           
@@ -88,6 +89,28 @@
     </footer>
 
   </div> <!-- /container -->
+
+<script type="text/javascript">
+$(function(){
+  $('#posts').sortable({
+    cursor: 'move',
+    placeholder: 'placeholder',
+    forcePlaceholderSize: true,
+    opacity: 0.4,
+    update: function() {
+      $.ajax({
+        url: '/memos/reorder',
+        type: 'POST',
+        dataType: 'text',
+        data: $(this).sortable('serialize') + '&authenticity_token=' + $('#authenticity_token').val(),
+
+      })
+    }
+  })
+  .disableSelection();
+});
+</script>
+
 
 <% else %>
   <%= link_to "Twitterでlogin","/auth/twitter" %>
