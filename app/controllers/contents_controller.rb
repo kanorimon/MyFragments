@@ -25,6 +25,9 @@ class ContentsController < ApplicationController
       @memos.each do |memo|
         session[:before_seq].push(memo.seq)
       end 
+      
+      logger.debug("*********seq*****")
+      logger.debug(session[:before_seq])
 
       respond_to do |format|
         format.html { render }

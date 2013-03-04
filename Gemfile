@@ -25,11 +25,11 @@ gem 'jquery-rails'
 gem 'omniauth'
 gem 'omniauth-twitter'
 
-gem 'twitter'
+#gem 'twitter'
 
 gem "paperclip", "~> 3.0"
 
-gem 'kaminari'
+#gem 'kaminari'
 #gem 'ransack'
 
 # To use ActiveModel has_secure_password

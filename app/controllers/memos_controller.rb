@@ -1,7 +1,6 @@
 # coding: utf-8
-require "twitter"
 class MemosController < ApplicationController
-  
+  protect_from_forgery :except => ["reorder"]
   def showlist
     # ユーザーのmemoを取得
     @memos = getDefaultMemos
@@ -65,27 +64,6 @@ class MemosController < ApplicationController
     else
       render 'memos/create.js.erb'
     end
-=begin    
-    # twitter_flgが"true"の場合
-    if params[:memo][:tweet_flg] == "true"
-      # twitterに投稿
-      Twitter.configure do |config|
-        config.consumer_key       = ENV['CONSUMER_KEY']
-        config.consumer_secret    = ENV['CONSUMER_SECRET']
-        config.oauth_token        = current_user.token
-        config.oauth_token_secret = current_user.secret
-      end
-      twitter_client = Twitter::Client.new
-      twitter_client.update(params[:memo][:text])
-    end
-=end
-    # ajax
-
-    # rootにリダイレクト
-    # redirect_to root_url, notice: 'Diary was successfully created.'
-    #else
-    #redirect_to root_url, notice: 'Diary was error.'
-    #end
   end
   
   # 文字列検索
@@ -173,25 +151,17 @@ class MemosController < ApplicationController
     @memo_seqs = params[:memo]
     logger.debug("****************************************")
 
-    @memo_seqs.each do |seq|
+    @memo_seqs.each_with_index do |seq,i|
+      if seq != session[:before_seq][i]
+        @memo = Memo.find_by_seq(session[:before_seq][i])
+        @memo.seq = seq
+        @memo.save!
+
+        session[:before_seq][i] = seq
        logger.debug(seq)
+       end
     end
 
-    logger.debug("****************************************")
-       logger.debug(before_seq)
-
-=begin
-    n = 0
-    ActiveRecord::Base.transaction do
-      @category_ids.each do |id|
-        category = Category.find(id)
-        category.sequence = n
-        n += 1
-        category.save
-      end
-    end
-=end
-    #params[:memo].each_with_index{|row, i| Memo.update(row, {:seq => i + 1})}
     render :nothing => true
   end
   

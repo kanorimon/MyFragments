@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   #private $PAGENUM = 5
   
   # ログインユーザhelper
-  helper_method :current_user, :last_memo
+  helper_method :current_user, :last_memo, :search_string, :before_seq
 
   # ログインユーザ設定
   private
