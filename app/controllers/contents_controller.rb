@@ -5,29 +5,25 @@ class ContentsController < ApplicationController
   def index
     # ログイン中の場合
     if current_user
-      session[:last_memo_id] = nil
+      session[:last_memo_seq] = nil
       session[:before_seq] = []
       
       # memo新規作成用
       @memo = Memo.new
       # ユーザーのmemoを取得
-      @memos = getDefaultMemos
-  
-      # もっと読むの制御
+      @condition = Memo.getConditions(current_user.id,session[:last_memo_seq])
+      @memos = Memo.getMemos(@condition)
       if @memos.blank?
         @count_memos = 0
       else
-        @count_memos = getDefaultMemosCount(@memos.last.id)
-        session[:last_memo_id] = @memos.last.id
+        @condition_count = Memo.getConditions(current_user.id,@memos.last.seq)
+        @count_memos = Memo.getMemosCount(@condition_count)
+        session[:last_memo_seq] = @memos.last.seq
       end
+
       @load_more_option = "show"
 
-      @memos.each do |memo|
-        session[:before_seq].push(memo.seq)
-      end 
-      
-      logger.debug("*********seq*****")
-      logger.debug(session[:before_seq])
+      before_seq_push(@memos)
 
       respond_to do |format|
         format.html { render }

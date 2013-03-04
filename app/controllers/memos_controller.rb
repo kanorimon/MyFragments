@@ -1,14 +1,17 @@
 # coding: utf-8
 class MemosController < ApplicationController
   protect_from_forgery :except => ["reorder"]
-  def showlist
-    # ユーザーのmemoを取得
-    @memos = getDefaultMemos
 
-    # もっと読むの制御
-    @count_memos = getDefaultMemosCount(@memos.last.id)
-    
-    session[:last_memo_id] = @memos.last.id
+  def showlist
+
+    # ユーザーのmemoを取得
+    @condition = Memo.getConditions(current_user.id,session[:last_memo_seq])
+    @memos = Memo.getMemos(@condition)
+    @condition_count = Memo.getConditions(current_user.id,@memos.last.seq)
+    @count_memos = Memo.getMemosCount(@condition_count)
+      
+    before_seq_push(@memos)
+    session[:last_memo_seq] = @memos.last.seq
 
     # ajax
     render 'contents/index.js.erb'
@@ -18,20 +21,17 @@ class MemosController < ApplicationController
   # メモ新規作成
   def create
     begin
+    # デフォルトエラーコメント設定
+    @error_comment = ERROR_COMMENT
     # 入力値の検証
-   @error_comment = "エラーが発生しました。再度投稿してください。"
-    if params[:memo][:text].blank?
-       @error_comment = "空白のメモは登録できません。"
-      raise
-    end
-    if params[:memo][:text].split(//u).length > 140
-       @error_comment = "メモは140文字まで投稿できます。"
-      raise
-    end
-    if params[:memo][:tag_name].split(//u).length > 100
-       @error_comment = "タグは100文字まで設定できます。"
-      raise
-    end
+   if !(validate_memo(params[:memo][:text]).blank?)
+      @error_comment = validate_memo(params[:memo][:text])
+     raise
+   end
+   if !(validate_tag(params[:memo][:tag_name]).blank?)
+      @error_comment = validate_tag(params[:memo][:tag_name])
+     raise
+   end
 
     # メモの入力内容を設定
     @memo = Memo.new
@@ -41,9 +41,9 @@ class MemosController < ApplicationController
     # dbに保存
     @memo.save!
 
+    # シーケンス番号を設定
     @memo.seq = @memo.id
     @memo.save!
-
 
     # 入力されたタグを空白で区切って配列として保存
     tagary =  params[:memo][:tag_name].gsub(/　/," ").split(nil)
@@ -56,6 +56,7 @@ class MemosController < ApplicationController
       @tag.save!
      }
 
+    # 表示用メモの取得
     @memos = Memo.find_by_id(@memo.id)
      
     rescue
@@ -150,16 +151,28 @@ class MemosController < ApplicationController
   def reorder
     @memo_seqs = params[:memo]
     logger.debug("****************************************")
-
+    logger.debug(@memo_seqs)
+    logger.debug(session[:before_seq])
+       
+    @target_memoids =[]
+    n = 0
     @memo_seqs.each_with_index do |seq,i|
       if seq != session[:before_seq][i]
-        @memo = Memo.find_by_seq(session[:before_seq][i])
-        @memo.seq = seq
-        @memo.save!
+        @target_memo = Memo.find_by_seq(session[:before_seq][i])
+        @target_memo.seq = seq.to_i * -1
+        @target_memo.save!
 
+        @target_memoids.push(@target_memo.id)
+         
         session[:before_seq][i] = seq
-       logger.debug(seq)
+
        end
+    end
+
+    @target_memoids.each do |ids|
+       @memo = Memo.find_by_id(ids)
+       @memo.seq = @memo.seq * -1
+       @memo.save!
     end
 
     render :nothing => true
