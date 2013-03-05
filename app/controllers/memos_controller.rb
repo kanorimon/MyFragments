@@ -2,152 +2,63 @@
 class MemosController < ApplicationController
   protect_from_forgery :except => ["reorder"]
 
-  def showlist
-
+  # メモ一覧（もっと読む）
+  def show_list
     # ユーザーのmemoを取得
-    @condition = Memo.getConditions(current_user.id,session[:last_memo_seq])
-    @memos = Memo.getMemos(@condition)
-    @condition_count = Memo.getConditions(current_user.id,@memos.last.seq)
-    @count_memos = Memo.getMemosCount(@condition_count)
-      
-    before_seq_push(@memos)
-    session[:last_memo_seq] = @memos.last.seq
-
-    # ajax
+    @memos,@count_memos = get_memos
+    # 画面表示
     render 'contents/index.js.erb'
-
-  end
-
-  # メモ新規作成
-  def create
-    begin
-    # デフォルトエラーコメント設定
-    @error_comment = ERROR_COMMENT
-    # 入力値の検証
-   if !(validate_memo(params[:memo][:text]).blank?)
-      @error_comment = validate_memo(params[:memo][:text])
-     raise
-   end
-   if !(validate_tag(params[:memo][:tag_name]).blank?)
-      @error_comment = validate_tag(params[:memo][:tag_name])
-     raise
-   end
-
-    # メモの入力内容を設定
-    @memo = Memo.new
-    @memo.user_id = current_user.id
-    @memo.text = params[:memo][:text]
-
-    # dbに保存
-    @memo.save!
-
-    # シーケンス番号を設定
-    @memo.seq = @memo.id
-    @memo.save!
-
-    # 入力されたタグを空白で区切って配列として保存
-    tagary =  params[:memo][:tag_name].gsub(/　/," ").split(nil)
-    tagary.each{|tag|
-      # タグの入力内容を設定
-      @tag = Tag.new
-      @tag.memo_id = @memo.id
-      @tag.name = tag
-      # dbに保存
-      @tag.save!
-     }
-
-    # 表示用メモの取得
-    @memos = Memo.find_by_id(@memo.id)
-     
-    rescue
-      render 'contents/error.js.erb'
-
-    else
-      render 'memos/create.js.erb'
-    end
   end
   
   # 文字列検索
   def find
-    # 検索用エンティティ
+    # 初期化
+    session_init
+    # memo新規作成用
     @memo = Memo.new
-    # 文字列検索実行
-    session[:last_memo_id] = nil
-
+    # 検索文字列をsessionに設定
     session[:search_string] = params[:search_string]
-
-    @memos = getFindMemos
-
-    # もっと読むの制御
-    if @memos.blank?
-      @count_memos = 0
-    else
-      @count_memos = getFindMemosCount(@memos.last.id)
-      session[:last_memo_id] = @memos.last.id
-    end
+    # メモ検索
+    @memos,@count_memos = search_memos
+    # もっと読むボタンのリンク先
     @load_more_option = "find"
-
-  
-    # indexを使って出力
+    # 画面表示
     render 'contents/index.html.erb'
   end
-  
-  def findlist
- 
-    @memos = getFindMemos
 
-    @count_memos = getFindMemosCount(@memos.last.id)
-    
-    session[:last_memo_id] = @memos.last.id
-
-    # ajax
+  # 文字列検索（もっと読む）
+  def find_list
+    # メモ検索
+    @memos,@count_memos = search_memos
+    # 画面表示
     render 'contents/index.js.erb'
-
   end
 
-
-  # 文字列検索
-  def tagfind
-    # 検索用エンティティ
+  # タグ検索
+  def tag_find
+    # 初期化
+    session_init
+    # memo新規作成用
     @memo = Memo.new
-    # 文字列検索実行
-    session[:last_memo_id] = nil
-
-    session[:search_string] = params[:tag_name]
-
-    @memos = getTagFindMemos
-
-    if @memos.blank?
-      @count_memos = 0
-    else
-      @count_memos = getTagFindMemosCount(@memos.last.id)
-      session[:last_memo_id] = @memos.last.id
-    end
-
-    @load_more_option = "tagfind"
-
-
-    # indexを使って出力
+    # 検索文字列をsessionに設定
+    session[:tag_search_string] = params[:tag_name]
+    # メモ検索
+    @memos,@count_memos = search_memos
+    # もっと読むボタンのリンク先
+    @load_more_option = "tag_find"
+    # 画面表示
     render 'contents/index.html.erb'
   end
   
-  def tagfindlist
- 
-    @memos = getTagFindMemos
-
-    @count_memos = getTagFindMemosCount(@memos.last.id)
-    
-    session[:last_memo_id] = @memos.last.id
-
-    # ajax
+  # タグ検索（もっと読む）
+  def tag_find_list
+    # メモ検索
+    @memos,@count_memos = search_memos
+    # 画面表示
     render 'contents/index.js.erb'
-
   end
   
-  def index
-    @memos = Memo.where("user_id =?", current_user.id).order('id desc').order('seq')
-  end
-
+  # ajaxによる並べ替え
   def reorder
     @memo_seqs = params[:memo]
     logger.debug("****************************************")
@@ -177,13 +88,71 @@ class MemosController < ApplicationController
 
     render :nothing => true
   end
+
+
+  # メモ新規作成
+  def create
+    begin
+      # デフォルトエラーコメント設定
+      @error_comment = ERROR_COMMENT
+      # 入力値の検証
+      if !(validate_memo(params[:memo][:text]).blank?)
+        @error_comment = validate_memo(params[:memo][:text])
+        raise
+      end
+      if !(validate_tag(params[:memo][:tag_name]).blank?)
+        @error_comment = validate_tag(params[:memo][:tag_name])
+        raise
+      end
+      
+      # メモを登録
+      @memo = memo_save_with_seq(params[:memo][:text])
+
+      # タグを登録
+      create_tags(params[:memo][:tag_name],@memo.id)
+
+      # 表示用メモの取得
+      @memos = Memo.find_by_id(@memo.id)
+      
+      # 画面に表示されているseqに追加
+      session[:before_seq].unshift(@memo.seq)
+      
+    rescue
+      render 'contents/error.js.erb'
+
+    else
+      render 'memos/create.js.erb'
+    end
+  end
   
+  
+  # メモ登録
+  def memo_save_with_seq(text)
+    # メモの入力内容を設定
+    @memo = Memo.new
+    @memo.user_id = current_user.id
+    @memo.text = text
+
+    # dbに保存
+    @memo.save!
+
+    # シーケンス番号を設定
+    @memo.seq = @memo.id
+    @memo.save!
+    
+    return @memo
+  end
+  
+  # メモ削除
   def destroy
 
     @delete_memo_id = params[:id]
-    logger.debug(@delete_memo_id)
     
     @memo = Memo.find(params[:id])
+
+    # 画面に表示されているseqを削除
+    session[:before_seq].delete(@memo.seq)
+
     @memo.destroy
     
     # ajax
