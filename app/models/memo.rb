@@ -62,7 +62,8 @@ class Memo < ActiveRecord::Base
   
   # メモ取得（タグ結合）
   def self.find_memos_with_tags(condition)
-    @memos = Memo.find(:all,:order => "memos.seq DESC",:limit => MAX_NUM,:conditions => condition,:include => :tags)
+    @memos_id = Memo.find(:all,:order => "memos.seq DESC",:limit => MAX_NUM,:conditions => condition,:include => :tags, :select => "memos.id")
+    @memos = Memo.where(["id in (?)", @memos_id]).order("seq DESC")
     return @memos
   end
 
