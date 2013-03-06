@@ -60,47 +60,52 @@ class MemosController < ApplicationController
   
   # ajaxによる並べ替え
   def reorder
-    @memo_seqs = params[:memo]
-    logger.debug("****************************************")
-    logger.debug(@memo_seqs)
-    logger.debug(session[:before_seq])
+    
+    begin
+      # デフォルトエラーコメント設定
+      @error_comment = ERROR_COMMENT
 
-    @before_seq_clone = session[:before_seq].clone()
-    @before_seq_clone.sort!
-    @before_seq_clone.reverse!
-
-    logger.debug(@before_seq_clone)
+      @memo_ids = params[:memo]
+  
+      session[:before_seq].sort!.reverse!
+    
+      Memo.transaction do
      
-    @target_memoids =[]
-    n = 0
-    @memo_seqs.each_with_index do |seq,i|
-    logger.debug("*****************")
-    logger.debug(seq)
-    logger.debug(i)
-    logger.debug(session[:before_seq][i])
-      
-      if seq != @before_seq_clone[i]
+        @target_memoids =[]
+
+        @memo_ids.each_with_index do |ids,i|
+          if ids != session[:before_id][i]
         
-        @target_memo = Memo.find_by_seq(seq)
-        @target_memo.seq = @before_seq_clone[i].to_i * -1
-        @target_memo.save!
+            @target_memo = Memo.find(ids)
+            @target_memo.seq = session[:before_seq][i].to_i * -1
+            @target_memo.save!
 
-        @target_memoids.push(@target_memo.id)
+            @target_memoids.push(@target_memo.id)
 
-       end
-        session[:before_seq][i] = @before_seq_clone[i]
+            session[:before_id][i] = ids
 
-    end
+          end
+        end
 
-    logger.debug(session[:before_seq])
+        logger.debug(session[:before_id][i])
 
-    @target_memoids.each do |ids|
-       @memo = Memo.find_by_id(ids)
-       @memo.seq = @memo.seq * -1
-       @memo.save!
-    end
+        @target_memoids.each do |ids|
+          @memo = Memo.find(ids)
+          @memo.seq = @memo.seq * -1
+          @memo.save!
+        end
+        
+      end
+    rescue
+       logger.debug("**********error")
+      #render 'contents/error.js.erb'
 
-    render :nothing => true
+    else
+       logger.debug("**********ok")
+      render :nothing => true
+
+    end     
+  
   end
 
 
@@ -129,6 +134,7 @@ class MemosController < ApplicationController
       @memos = Memo.find_by_id(@memo.id)
       
       # 画面に表示されているseqに追加
+      session[:before_id].unshift(@memo.id)
       session[:before_seq].unshift(@memo.seq)
       
     rescue
@@ -165,6 +171,7 @@ class MemosController < ApplicationController
     @memo = Memo.find(params[:id])
 
     # 画面に表示されているseqを削除
+    session[:before_id].delete(@memo.id)
     session[:before_seq].delete(@memo.seq)
 
     @memo.destroy

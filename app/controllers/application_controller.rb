@@ -19,6 +19,7 @@ class ApplicationController < ActionController::Base
   # session初期化
   def session_init
     session[:before_seq] = []
+    session[:before_id] = []
     session[:last_memo_seq] = nil
     session[:search_string] = nil
     session[:tag_search_string] = nil
@@ -60,7 +61,6 @@ class ApplicationController < ActionController::Base
       @tag.name = tag
       # dbに保存
       @tag.save!
-      logger.debug("*******************createtags")
     }
   end
   
@@ -70,7 +70,6 @@ class ApplicationController < ActionController::Base
     @delete_tags.each{|delete_tag|
       delete_tag.destroy
     }
-      logger.debug("*******************deletetags")
   end
 
   # メモと残メモカウント取得（通常）
@@ -134,6 +133,7 @@ class ApplicationController < ActionController::Base
   # 画面に表示されているseqを配列に追加
   def before_seq_push(memos)
     memos.each do |memo|
+      session[:before_id].push(memo.id)
       session[:before_seq].push(memo.seq)
     end 
   end
