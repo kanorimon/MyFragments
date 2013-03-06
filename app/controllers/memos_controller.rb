@@ -64,21 +64,35 @@ class MemosController < ApplicationController
     logger.debug("****************************************")
     logger.debug(@memo_seqs)
     logger.debug(session[:before_seq])
-       
+
+    @before_seq_clone = session[:before_seq].clone()
+    @before_seq_clone.sort!
+    @before_seq_clone.reverse!
+
+    logger.debug(@before_seq_clone)
+     
     @target_memoids =[]
     n = 0
     @memo_seqs.each_with_index do |seq,i|
-      if seq != session[:before_seq][i]
-        @target_memo = Memo.find_by_seq(session[:before_seq][i])
-        @target_memo.seq = seq.to_i * -1
+    logger.debug("*****************")
+    logger.debug(seq)
+    logger.debug(i)
+    logger.debug(session[:before_seq][i])
+      
+      if seq != @before_seq_clone[i]
+        
+        @target_memo = Memo.find_by_seq(seq)
+        @target_memo.seq = @before_seq_clone[i].to_i * -1
         @target_memo.save!
 
         @target_memoids.push(@target_memo.id)
-         
-        session[:before_seq][i] = seq
 
        end
+        session[:before_seq][i] = @before_seq_clone[i]
+
     end
+
+    logger.debug(session[:before_seq])
 
     @target_memoids.each do |ids|
        @memo = Memo.find_by_id(ids)
@@ -157,6 +171,55 @@ class MemosController < ApplicationController
     
     # ajax
     render 'memos/delete.js.erb'
+  end
+  
+    # メモ表示
+  def show
+    # 画面制御用memo_id
+    @memo_id = params[:memo_id]    
+    # タグ取得
+    @memo_text = Memo.find(params[:memo_id]).text
+    render 'memos/show.js.erb'
+  end
+
+  # メモ入力表示
+  def input
+    # 画面制御用memo_id
+    @memo_id = params[:memo_id]
+    @memo_text = Memo.find(params[:memo_id]).text
+
+    render 'memos/input.js.erb'
+    
+  end
+  
+  
+  # メモ更新
+  def update
+    begin
+      # 画面制御用memo_id
+      @memo_id = params[:memo_id]
+      @memo_text = params[:memo_text]
+
+      # デフォルトエラーコメント設定
+      @error_comment = ERROR_COMMENT
+
+      # 入力値の検証
+      if !(validate_memo(params[:memo_text]).blank?)
+        @error_comment = validate_memo(params[:memo_text])
+        raise
+      end
+
+      # メモを更新
+      @memo = Memo.find(params[:memo_id])
+      @memo.text = params[:memo_text]
+      @memo.save!
+      
+    rescue
+      render 'contents/error.js.erb'
+
+    else
+      render 'memos/show.js.erb'
+    end
   end
   
 end

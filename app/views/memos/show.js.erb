@@ -1,0 +1,3 @@
+$('#update_<%= @memo_id %>').show();
+$('#update_close_<%= @memo_id %>').hide();
+$('#text_<%= @memo_id %>').replaceWith("<%= escape_javascript(render :partial => 'memos/show', :locals => {:memo_id => @memo_id, :memo_text => @memo_text} )%>");

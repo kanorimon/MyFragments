@@ -1,6 +1,0 @@
-<div class="text-right" id="tag<%= @memo_id %>">
-  <% @tags.each do |tag| %>
-    <a href="#"><%= tag.name %></a> 
-  <% end %>
-  <%= link_to '<i class="icon-edit"></i> '.html_safe, tags_input_path(:memo_id => @memo_id) , :remote => true %>
-</div>

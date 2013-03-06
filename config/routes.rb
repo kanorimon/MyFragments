@@ -14,12 +14,15 @@ Memoapp::Application.routes.draw do
   match "/logout" => "sessions#destroy", :as => :logout
   match "/remove" => "users#destroy", :as => :remove
   match 'memos/find'
+  match 'memos/update'
   match "/load_more" => "memos#show_list", :as => :load_more
   match "/load_find_more" => "memos#find_list", :as => :load_find_more
   match "/load_tag_find_more" => "memos#tag_find_list", :as => :load_tag_find_more
   match "/tags_input" => "tags#input", :as => :tags_input
   match "/tags_show" => "tags#show", :as => :tags_show
   match "/tags_find" => "memos#tag_find", :as => :tags_find
+  match "/memos_input" => "memos#input", :as => :memos_input
+  match "/memos_show" => "memos#show", :as => :memos_show
   #match "/reorder_todos" => "memos#reorder", :as => :reorder_todos
   match 'memos/reorder' => 'memos#reorder', :via => [:get, :post]
   # match 'memos/create'

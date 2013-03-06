@@ -1,4 +1,4 @@
-<div class="text-right" id="tag<%= @memo_id %>">
+<div class="text-right" id="tag_<%= @memo_id %>">
 
 <%= form_tag({:controller => "tags", :action => "create"}, {:class => "form-inline",:remote => true}) do %>
   <%= hidden_field_tag 'memo_id', @memo_id %>

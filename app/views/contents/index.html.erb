@@ -93,6 +93,7 @@
 $(function(){
   $('#posts').sortable({
     cursor: 'move',
+    handle: 'span',
     placeholder: 'placeholder',
     forcePlaceholderSize: true,
     opacity: 0.4,
@@ -105,8 +106,7 @@ $(function(){
 
       })
     }
-  })
-  .disableSelection();
+  });
 });
 </script>
 
