@@ -12,7 +12,7 @@ class UsersController < ApplicationController
     session[:user_id] = nil
     
     # indexにリダイレクト
-    redirect_to root_url
+    redirect_to root_url, :notice => "退会しました。"
   end
 
 end

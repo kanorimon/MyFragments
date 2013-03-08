@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130304110411) do
+ActiveRecord::Schema.define(:version => 20130308023019) do
 
   create_table "memos", :force => true do |t|
     t.integer  "user_id"
@@ -20,6 +20,8 @@ ActiveRecord::Schema.define(:version => 20130304110411) do
     t.datetime "updated_at", :null => false
     t.integer  "seq"
   end
+
+  add_index "memos", ["seq"], :name => "index_memos_on_seq", :unique => true
 
   create_table "tags", :force => true do |t|
     t.string   "name"

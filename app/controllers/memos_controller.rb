@@ -64,6 +64,8 @@ class MemosController < ApplicationController
     begin
       # デフォルトエラーコメント設定
       @error_comment = ERROR_COMMENT
+      logger.debug(session[:before_seq])
+      logger.debug(session[:before_id])
 
       @memo_ids = params[:memo]
   
@@ -87,7 +89,8 @@ class MemosController < ApplicationController
           end
         end
 
-        logger.debug(session[:before_id][i])
+         #テスト用エラー発生
+        #logger.debug(session[:before_id][i])
 
         @target_memoids.each do |ids|
           @memo = Memo.find(ids)
@@ -97,14 +100,12 @@ class MemosController < ApplicationController
         
       end
     rescue
-       logger.debug("**********error")
-      #render 'contents/error.js.erb'
+
 
     else
-       logger.debug("**********ok")
       render :nothing => true
 
-    end     
+    end
   
   end
 
@@ -172,7 +173,9 @@ class MemosController < ApplicationController
 
     # 画面に表示されているseqを削除
     session[:before_id].delete(@memo.id)
+    session[:before_id].delete(@memo.id.to_s)
     session[:before_seq].delete(@memo.seq)
+    session[:before_seq].delete(@memo.seq.to_s)
 
     @memo.destroy
     
@@ -183,7 +186,7 @@ class MemosController < ApplicationController
     # メモ表示
   def show
     # 画面制御用memo_id
-    @memo_id = params[:memo_id]    
+    @memo_id = params[:memo_id]
     # タグ取得
     @memo_text = Memo.find(params[:memo_id]).text
     render 'memos/show.js.erb'

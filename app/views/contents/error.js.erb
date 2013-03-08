@@ -1,1 +1,1 @@
-$('#error').prepend("<%= escape_javascript(render :partial => 'contents/error', :locals => {:error_comment => @error_comment})%>");
+showErrorToast("<%= @error_comment %>");

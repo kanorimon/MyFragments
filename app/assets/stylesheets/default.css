@@ -18,6 +18,12 @@
         border: 0px solid #aaaaaa;
       }
       
+     .modal-backdrop {background: none;}
+
+     .row-under{
+       margin-top: 2px;
+      }  
+
       .container-fluid,
       .row-fluid { height: inherit; }
       

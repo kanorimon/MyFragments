@@ -26,4 +26,11 @@ class ContentsController < ApplicationController
     end
   end
   
+  def rule
+  end
+
+  def help
+  end
+
+  
 end

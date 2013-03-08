@@ -31,8 +31,8 @@ class ApplicationController < ActionController::Base
     if memo_text.blank?
       error_comment = "空白のメモは登録できません。"
     end
-    if memo_text.split(//u).length > 140
-      error_comment = "メモは140文字まで投稿できます。"
+    if memo_text.split(//u).length > 256
+      error_comment = "メモは256文字まで投稿できます。"
     end
     return error_comment
   end
@@ -40,12 +40,12 @@ class ApplicationController < ActionController::Base
   # 入力値の検証（タグ）
   def validate_tag(tag_name)
     error_comment = ""
-    tagary =  tag_name.gsub(/　/," ").split(nil)
-    if tagary.size > 10
-       error_comment = "タグは10個まで設定できます。"
+    tagary = tag_name.gsub(/　/," ").split(nil)
+    if tagary.size > 16
+       error_comment = "タグは16個まで設定できます。"
     end
-    if tag_name.split(//u).length > 100
-       error_comment = "タグは100文字まで設定できます。"
+    if tag_name.split(//u).length > 128
+       error_comment = "タグは128文字まで設定できます。"
     end
     return error_comment
   end
@@ -53,7 +53,7 @@ class ApplicationController < ActionController::Base
   # タグ登録
   def create_tags(tag_name,memo_id)
     # 入力されたタグを空白で区切って配列として保存
-    tagary =  tag_name.gsub(/　/," ").split(nil)
+    tagary = tag_name.gsub(/　/," ").split(nil)
     tagary.each{|tag|
       # タグの入力内容を設定
       @tag = Tag.new
@@ -135,7 +135,7 @@ class ApplicationController < ActionController::Base
     memos.each do |memo|
       session[:before_id].push(memo.id)
       session[:before_seq].push(memo.seq)
-    end 
+    end
   end
 
 

@@ -1,48 +1,22 @@
+
 <% if current_user %>
-  <div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-      <div class="container">
-        <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="brand" href="http://192.168.0.5:8080">MyFragments</a>
-
-        <div class="nav-collapse collapse">
-          <div class="navbar-form pull-right">
-            <span class="btn-group">
-              <%= image_tag current_user.avatar.url , :class => "img-rounded my-icon" %>
-              <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                <%= current_user.nickname %> 
-                <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu pull-right">
-                <li><%= link_to "ログアウト" ,logout_path %></li>
-                <li class="divider"></li>
-                <li><%= link_to "退会" ,remove_path %></li>
-              </ul>
-            </span>
-          </div>
-        </div><!--/.nav-collapse -->
-      </div><!--/.container -->
-    </div><!--/.navbar-inner -->
-  </div><!--/.navbar -->
-
-  <div class="container">
 
     <div class="row">
       <div class="span3">
         <%= form_for @memo, :url => {:controller => 'memos',:action => 'create'}, :remote => true do |f| %>
-          <%= f.text_area :text, :class => "span3", :placeholder => "Fragments?", :size=>"10x3" %>
+          <%= f.text_area :text, :class => "span3", :size=>"10x3" %>
           <%= f.text_field :tag_name, :class => "span3" %>
-          <%= f.submit "memo", :class => "btn btn-primary" %>
+          <%= button_tag(:type => 'submit', :class => 'btn btn-primary') do %>
+            <i class="icon-pencil icon-white"></i>
+          <% end %>
         <% end %>
       
         <hr>
         <%= form_tag(:controller => "memos", :action => "find") do %>
           <%= text_field_tag 'search_string', nil, :class => 'span3' %>
-          <%= submit_tag "search",:class => "btn btn-primary"  %>
+          <%= button_tag(:type => 'submit', :class => 'btn btn-primary') do %>
+            <i class="icon-search icon-white"></i>
+          <% end %>
         <% end %>
 
         <hr>
@@ -63,33 +37,25 @@
         <% else %>
           <% if @load_more_option == "show" %>
             <%= link_to load_more_path , :remote => true, :id => "load_more_link" do %>
-              <button class="btn" type="button">もっと見る</button>
+              <button class="btn" type="button"><i class="icon-arrow-down"></i></button>
             <% end %>
           <% elsif @load_more_option == "find" %>
             <%= link_to load_find_more_path , :remote => true, :id => "load_more_link" do %>
-              <button class="btn" type="button">もっと見る</button>
+              <button class="btn" type="button"><i class="icon-arrow-down"></i></button>
             <% end %>
           <% elsif @load_more_option == "tag_find" %>
             <%= link_to load_tag_find_more_path , :remote => true, :id => "load_more_link" do %>
-              <button class="btn" type="button">もっと見る</button>
+              <button class="btn" type="button"><i class="icon-arrow-down"></i></button>
             <% end %>
           <% end %>
         <% end %>
-           
-       
           
       </div><!-- /span9 -->
     </div><!-- /row -->
 
-    <hr>
-    
-    <footer>
-      <p>ヘルプ&nbsp;&nbsp;利用規約&nbsp;&nbsp;お問い合わせ</p>
-    </footer>
-
-  </div> <!-- /container -->
 
 <script type="text/javascript">
+
 $(function(){
   $('#posts').sortable({
     cursor: 'move',
@@ -103,14 +69,39 @@ $(function(){
         type: 'POST',
         dataType: 'text',
         data: $(this).sortable('serialize'),
-
-      })
+      }).done( )
+        .fail( function(){showErrorToast("並べ替えに失敗しました。<br>リロードしてください。");} );
     }
   });
 });
+
 </script>
 
-
 <% else %>
-  <%= link_to "Twitterでlogin","/auth/twitter" %>
+
+<div class="hero-unit">
+    <h2>MyFragments </h2>
+    <p>気軽にメモして、整理は後で。どんどんメモする自分だけのメモ帳です。</p>
+  <p>
+    <%= link_to "Twitterでlogin","/auth/twitter", :class => "btn btn-primary" %>
+  </p>
+</div>
+
+<% end %>
+
+
+<% unless flash[:notice].blank? %>
+  <script type="text/javascript" charset="utf-8">
+    $(function(){
+      $().toastmessage('showNoticeToast', "<%= flash[:notice] %>");
+    });
+  </script>
+<% end %>
+
+<% unless flash[:alert].blank? %>
+  <script type="text/javascript" charset="utf-8">
+    $(function(){
+      $().toastmessage('showErrorToast', "<%= flash[:alert] %>");
+    });
+  </script>
 <% end %>

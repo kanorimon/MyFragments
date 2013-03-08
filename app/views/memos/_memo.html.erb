@@ -1,8 +1,7 @@
       <div id="memo_<%= memo.id %>" name="memo_<%= memo.seq %>">
         <div class="row">
           <div class="span7" id="text_<%= memo.id %>">
-            <%= memo.id %>:
-            <%= memo.text %>
+            <%= br(memo.text) %>
           </div>
           <div class="span2">
             <div class="text-right">
@@ -15,27 +14,24 @@
                 <i class="icon-remove"></i>
               <% end %>
               <% delete_memo_id = "delete_" + memo.id.to_s %>
-              <%= link_to memo, :method => :delete, :remote => true, data: { confirm: '削除しますか？' }, class: "btn btn-mini", :id => delete_memo_id do %>
+              <%= link_to memo, method: :delete, :remote => true, class: "btn btn-mini", :id => delete_memo_id, :confirm => "削除しますか？" do %>
                 <i class="icon-trash"></i>
               <% end %>
+
               <span class="btn btn-mini" id="move_<%= memo.id %>" type="button"><i class="icon-move"></i></span>
             </div>
           </div>
         </div>
 
-<script type="text/javascript">
-$(function(){
-  $('#update_close_<%= memo.id.to_s %>').hide();
-});
-</script>
 
-        <div class="row">
+
+        <div class="row row-under">
           <div class="span7 weak">
             <div class="text-right" id="tag_<%= memo.id %>">
               <% memo.tags.each do |tag| %>
                 <%= link_to tag.name, tags_find_path(:tag_name => tag.name) %>&nbsp;
               <% end %>
-              <%= link_to '<i class="icon-tags"></i> '.html_safe, tags_input_path(:memo_id => memo.id) , :remote => true %>
+              <%= link_to '<i class="icon-tags"></i>'.html_safe, tags_input_path(:memo_id => memo.id) , :remote => true %>
             </div>
           </div>
           <div class="span2 weak">
@@ -46,4 +42,13 @@ $(function(){
         </div>
 
         <hr class="memo">
+
+
+<script type="text/javascript">
+$(function(){
+  $('#update_close_<%= memo.id.to_s %>').hide();
+});
+
+</script>
+
       </div>

@@ -10,8 +10,10 @@ class Memo < ActiveRecord::Base
 
   validates :text, 
     :presence => true,
-    :length => {:maximum => 140}
+    :length => {:maximum => 256}
 
+  validates :seq, :uniqueness => true
+  
   # 一回あたりのメモ取得最大数
   MAX_NUM = 5
 
@@ -85,6 +87,69 @@ class Memo < ActiveRecord::Base
     [condition, ps].flatten unless condition.empty?
   end
   
+  # 残メモ数取得（タグ結合）
+  def self.new_user(user_id)
+    texts = []
+    texts[5] = "MyFragmentsへようこそ！"
+    texts[4] = "【メモ】
+投稿：左上のテキストエリアにメモを入力して鉛筆ボタンをクリック！256文字まで投稿できます。
+編集：メモの右側のエディットボタンをクリック！
+削除：メモの右側のゴミ箱ボタンをクリック！
+並べ替え：メモの右側の移動ボタンをドラッグ＆ドロップ！"
+    texts[3] = "【タグ】
+設定：メモを登録する時に、テキストエリアの下の入力欄にタグを入力！16個（128文字）まで設定できます。
+編集：メモの下のタグアイコンをクリック！"
+    texts[2] = "【検索】
+文字列検索：左側の入力欄に検索したい文字列入力して検索ボタンをクリック！
+タグ検索：検索したいタグをクリック！"
+    texts[1] = "【ユーザー】
+ログアウト：右上のユーザー名からメニューを表示してログアウトをクリック！
+退会：右上のユーザー名からメニューを表示して退会をクリック！退会時にメモはすべて消去します。"
+    texts[0] = "今表示されているメモは不要になったら削除してOKです。削除後はヘルプをご覧ください。"
 
+    tags = []
+    tags[5] = []
+    tags[5][1] = "ヘルプ"
+    tags[5][0] = "システムメッセージ"
+    tags[4] = []
+    tags[4][2] = "メモ"
+    tags[4][1] = "ヘルプ"
+    tags[4][0] = "システムメッセージ"
+    tags[3] = []
+    tags[3][2] = "タグ"
+    tags[3][1] = "ヘルプ"
+    tags[3][0] = "システムメッセージ"
+    tags[2] = []
+    tags[2][2] = "検索"
+    tags[2][1] = "ヘルプ"
+    tags[2][0] = "システムメッセージ"
+    tags[1] = []
+    tags[1][2] = "ユーザー"
+    tags[1][1] = "ヘルプ"
+    tags[1][0] = "システムメッセージ"
+    tags[0] = []
+    tags[0][1] = "ヘルプ"
+    tags[0][0] = "システムメッセージ"
+    
+    texts.each_with_index do |text,i|
+      @first_memos = Memo.new
+      @first_memos.user_id = user_id
+      @first_memos.text = text
+      # dbに保存
+      @first_memos.save!
+
+      # シーケンス番号を設定
+      @first_memos.seq =  @first_memos.id
+      @first_memos.save!
+
+        tags[i].each_with_index do |tag,k|
+          @first_tags = Tag.new
+          @first_tags.memo_id = @first_memos.id
+          @first_tags.name = tag
+          # dbに保存
+          @first_tags.save!
+      end
+    end
+  end
   
 end

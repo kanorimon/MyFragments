@@ -13,6 +13,8 @@ Memoapp::Application.routes.draw do
   match "/auth/:provider/callback" => "sessions#create"
   match "/logout" => "sessions#destroy", :as => :logout
   match "/remove" => "users#destroy", :as => :remove
+  match "/rule" => "contents#rule", :as => :rule
+  match "/help" => "contents#help", :as => :help
   match 'memos/find'
   match 'memos/update'
   match "/load_more" => "memos#show_list", :as => :load_more
