@@ -55,4 +55,18 @@
         color: #999999;
       }
 
+      .login_comment {
+        font-size: 85%;
+      }      
+      .login_button{
+      	  margin-top: 20px;
+      	
+      }
+
+.navbar .brand {
+    max-height: 40px;
+    overflow: visible;
+    padding-top: 5px;
+    padding-bottom: 0;
+}
       

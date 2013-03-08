@@ -80,10 +80,10 @@ $(function(){
 <% else %>
 
 <div class="hero-unit">
-    <h2>MyFragments </h2>
-    <p>気軽にメモして、整理は後で。どんどんメモする自分だけのメモ帳です。</p>
-  <p>
-    <%= link_to "Twitterでlogin","/auth/twitter", :class => "btn btn-primary" %>
+    <%= image_tag("logo-large.png") %>
+    <p class="login_comment">気軽にメモして、整理は後で。どんどんメモする自分だけのメモ帳です。</p>
+  <p class="weak login_button" >
+    <%= link_to image_tag('sign-in-with-twitter-gray.png'),"/auth/twitter" %>　Twitterアカウントを使ってログインします。
   </p>
 </div>
 
