@@ -7,83 +7,42 @@ Memoapp::Application.routes.draw do
   resources :memos
   resources :tags
     
+  # root
   root :to => 'contents#index'
   
   # OmniAuth
   match "/auth/:provider/callback" => "sessions#create"
+
+  # ログアウト
   match "/logout" => "sessions#destroy", :as => :logout
+  # 退会
   match "/remove" => "users#destroy", :as => :remove
+
+  # 利用規約
   match "/rule" => "contents#rule", :as => :rule
+  # ヘルプ
   match "/help" => "contents#help", :as => :help
+
+  # 検索
   match 'memos/find'
-  match 'memos/update'
+  match "/tags_find" => "memos#tag_find", :as => :tags_find
+
+  # もっと読む
   match "/load_more" => "memos#show_list", :as => :load_more
   match "/load_find_more" => "memos#find_list", :as => :load_find_more
   match "/load_tag_find_more" => "memos#tag_find_list", :as => :load_tag_find_more
+
+  # タグ更新
   match "/tags_input" => "tags#input", :as => :tags_input
   match "/tags_show" => "tags#show", :as => :tags_show
-  match "/tags_find" => "memos#tag_find", :as => :tags_find
+
+  # メモ更新
+  match 'memos/update'
   match "/memos_input" => "memos#input", :as => :memos_input
   match "/memos_show" => "memos#show", :as => :memos_show
-  #match "/reorder_todos" => "memos#reorder", :as => :reorder_todos
+
+  # メモ並び替え
   match 'memos/reorder' => 'memos#reorder', :via => [:get, :post]
-  # match 'memos/create'
-  # match 'memos/destroy'
 
-  # The priority is based upon order of creation:
-  # first created -> highest priority.
 
-  # Sample of regular route:
-  #   match 'products/:id' => 'catalog#view'
-  # Keep in mind you can assign values other than :controller and :action
-
-  # Sample of named route:
-  #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
-  # This route can be invoked with purchase_url(:id => product.id)
-
-  # Sample resource route (maps HTTP verbs to controller actions automatically):
-  #   resources :products
-
-  # Sample resource route with options:
-  #   resources :products do
-  #     member do
-  #       get 'short'
-  #       post 'toggle'
-  #     end
-  #
-  #     collection do
-  #       get 'sold'
-  #     end
-  #   end
-
-  # Sample resource route with sub-resources:
-  #   resources :products do
-  #     resources :comments, :sales
-  #     resource :seller
-  #   end
-
-  # Sample resource route with more complex sub-resources
-  #   resources :products do
-  #     resources :comments
-  #     resources :sales do
-  #       get 'recent', :on => :collection
-  #     end
-  #   end
-
-  # Sample resource route within a namespace:
-  #   namespace :admin do
-  #     # Directs /admin/products/* to Admin::ProductsController
-  #     # (app/controllers/admin/products_controller.rb)
-  #     resources :products
-  #   end
-
-  # You can have the root of your site routed with "root"
-  # just remember to delete public/index.html.
-  # root :to => 'welcome#index'
-
-  # See how all your routes lay out with "rake routes"
-
-  # This is a legacy wild controller route that's not recommended for RESTful applications.
-  # Note: This route will make all actions in every controller accessible via GET requests.
-  # match ':controller(/:action(/:id))(.:format)'
 end

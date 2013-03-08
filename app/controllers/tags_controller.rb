@@ -31,18 +31,15 @@ class TagsController < ApplicationController
     begin
       # 画面制御用memo_id
       @memo_id = params[:memo_id]
-      logger.debug("*******************1")
 
       # デフォルトエラーコメント設定
       @error_comment = ERROR_COMMENT
-      logger.debug("*******************2")
 
       # 入力値の検証
       if !(validate_tag(params[:tag_names]).blank?)
         @error_comment = validate_tag(params[:tag_names])
         raise
       end
-      logger.debug("*******************3")
       
       # タグ削除
       delete_tags(params[:memo_id])

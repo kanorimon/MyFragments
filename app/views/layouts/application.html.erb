@@ -24,7 +24,7 @@
         </button>
         <a class="brand" href="<%= root_url(:only_path => false) %>"><%= image_tag("logo-small.png") %></a>
 
-<% if current_user %>
+        <% if current_user %>
         <div class="nav-collapse collapse">
           <div class="navbar-form pull-right">
             <span class="btn-group">
@@ -41,10 +41,7 @@
             </span>
           </div>
         </div><!--/.nav-collapse -->
-        
-
-  
-<% end %>
+        <% end %>
 
       </div><!--/.container -->
     </div><!--/.navbar-inner -->
@@ -70,9 +67,10 @@
     
     <footer>
       <p>
-    <%= link_to "ヘルプ", help_path %> | 
-    <%= link_to "利用規約", rule_path %> | 
-     <a href="http://twitter.com/kanorimon" target="_blank" >お問い合わせ</a>
+        <%= link_to "ヘルプ", help_path %> | 
+        <%= link_to "利用規約", rule_path %> | 
+        <a href="http://twitter.com/kanorimon" target="_blank" >お問い合わせ</a>
+      </p>
     </footer>
 
   </div> <!-- /container -->

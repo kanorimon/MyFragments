@@ -1,11 +1,9 @@
-          <div class="span7" id="text_<%= @memo_id %>">
-<%= form_tag({:controller => "memos", :action => "update"}, {:class => "form-inline",:remote => true}) do %>
-  <%= hidden_field_tag 'memo_id', @memo_id %>
-  <%= text_area_tag 'memo_text', @memo_text, :class => 'span6' %>
-  <%= button_tag(:type => 'submit', :class => 'btn btn-primary') do %>
-    <i class="icon-pencil icon-white"></i>
+<div class="span7" id="text_<%= @memo_id %>">
+  <%= form_tag({:controller => "memos", :action => "update"}, {:class => "form-inline",:remote => true}) do %>
+    <%= hidden_field_tag 'memo_id', @memo_id %>
+    <%= text_area_tag 'memo_text', @memo_text, :class => 'span6' %>
+    <%= button_tag(:type => 'submit', :class => 'btn btn-primary') do %>
+      <i class="icon-pencil icon-white"></i>
+    <% end %>
   <% end %>
- 
-<% end %>
-
-          </div>
+</div>

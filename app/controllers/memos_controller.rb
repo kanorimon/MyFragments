@@ -101,7 +101,6 @@ class MemosController < ApplicationController
       end
     rescue
 
-
     else
       render :nothing => true
 

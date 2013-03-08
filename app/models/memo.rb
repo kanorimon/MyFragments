@@ -75,7 +75,7 @@ class Memo < ActiveRecord::Base
     return @count_memos
   end
   
-  
+  # 検索条件の作成
   def self.flatten_conditions(conditions)
     return nil if conditions.empty?
     ps = []
@@ -87,7 +87,7 @@ class Memo < ActiveRecord::Base
     [condition, ps].flatten unless condition.empty?
   end
   
-  # 残メモ数取得（タグ結合）
+  # 初回メモ登録
   def self.new_user(user_id)
     texts = []
     texts[5] = "MyFragmentsへようこそ！"

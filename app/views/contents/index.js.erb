@@ -1,4 +1,4 @@
 $('#posts').append("<%= escape_javascript(render :partial => @memos)%>");
 <% if @count_memos == 0 %>
-    $('#load_more_link').hide();
+  $('#load_more_link').hide();
 <% end %>

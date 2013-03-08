@@ -1,13 +1,12 @@
 <div class="text-right" id="tag_<%= @memo_id %>">
-
-<%= form_tag({:controller => "tags", :action => "create"}, {:class => "form-inline",:remote => true}) do %>
-  <%= hidden_field_tag 'memo_id', @memo_id %>
-  <%= text_field_tag 'tag_names', nil, :class => 'span6', :value => @print_tag %>
-  <%= button_tag(:type => 'submit', :class => 'btn btn-primary') do %>
-    <i class="icon-pencil icon-white"></i>
+  <%= form_tag({:controller => "tags", :action => "create"}, {:class => "form-inline",:remote => true}) do %>
+    <%= hidden_field_tag 'memo_id', @memo_id %>
+    <%= text_field_tag 'tag_names', nil, :class => 'span6', :value => @print_tag %>
+    <%= button_tag(:type => 'submit', :class => 'btn btn-primary') do %>
+      <i class="icon-pencil icon-white"></i>
+    <% end %>
+    <%= link_to tags_show_path(:memo_id => @memo_id) , :remote => true do %>
+      <i class="icon-remove"></i>
+    <% end %>
   <% end %>
-  <%= link_to tags_show_path(:memo_id => @memo_id) , :remote => true do %>
-    <i class="icon-remove"></i>
-  <% end %>
-<% end %>
 </div>
