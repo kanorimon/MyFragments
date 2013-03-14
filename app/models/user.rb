@@ -4,9 +4,12 @@ class User < ActiveRecord::Base
   # データ定義
   attr_accessible :name, :provider, :uid, :nickname, :avatar
   # paperclip設定
-  has_attached_file :avatar,:format => :jpeg, :styles => { :original => "30x30>" }
-  # postしたあと、画像のファイル名変更を起動
-  before_post_process :transliterate_file_name
+  has_attached_file :avatar,:format => :jpeg, 
+  :styles => { :original => "30x30>" },
+  :storage => :s3,
+  :s3_credentials => "#{Rails.root}/config/s3.yml",
+  :path => ":attachment/:id/:style.:extension"
+
   # リレーション
   has_many :memos, :dependent => :destroy
 
@@ -19,13 +22,6 @@ class User < ActiveRecord::Base
       user.nickname = auth["info"]["nickname"]
       user.avatar = open(auth["info"]["image"])
     end
-  end
-
-  # 画像のファイル名変更
-  def transliterate_file_name
-    extension = 'jpg'
-    filename = self.nickname
-    self.avatar.instance_write(:file_name, "#{filename}.#{extension}")
   end
 
 end
